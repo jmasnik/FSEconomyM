@@ -26,7 +26,7 @@
         "#fsem-settings h2 { background-color: gray; color: white; font-size: 15px; padding:4px; text-align:left; }" +
         "#fsem-settings textarea { margin: 5px; width: 360px; background-color: #f0f0f0; height:40px; padding: 5px; } " +
         "#fsem-settings input { margin: 5px; width: 360px; background-color: #f0f0f0; padding: 5px; color: white; font-weight:bold; background-color: gray; } " +
-        "#fsem-menu { width: 100px; position: absolute; left: 10px; font-size: 14px; line-height: normal; }" + 
+        "#fsem-menu { width: 150px; position: absolute; left: 10px; font-size: 14px; line-height: normal; }" + 
         "#fsem-menu h2 { display: block; border-bottom: 1px solid gray; color: #000; padding: 3px; font-size: 14px; margin-bottom: 2px; }" + 
         "#fsem-menu a { display: block; text-decoration: none; color: #3366CC; padding: 3px; } " + 
         "#fsem-menu a:hover { background-color: #dddddd; }" + 
@@ -39,6 +39,9 @@
     if(localStorage.getItem("fsem_airport_list") === null){
         localStorage.setItem("fsem_airport_list", "LKBU;LKCM");
     }
+    if(localStorage.getItem("fsem_aircraft_list") === null){
+        localStorage.setItem("fsem_aircraft_list", "10191@R-22 (OK-MAY);29080@AS350 (OK-DSW)");
+    }
     
     // settings dialog
     el_block = document.createElement("div");
@@ -49,13 +52,33 @@
     // airports list
     var airport_list = localStorage.getItem("fsem_airport_list").split(";");
     
+    // aircraft list
+    var aircraft_list = localStorage.getItem("fsem_aircraft_list").split(";");
+    
     // left menu
     var html = "";
-    html += "<h2>Airports</h2>";
-    for(i = 0; i < airport_list.length; i++){
-        html += '<a href="airport.jsp?icao='+airport_list[i]+'">'+airport_list[i]+'</a>';
+    
+    if(airport_list.length > 0){
+        html += "<h2>Airports</h2>";
+        for(i = 0; i < airport_list.length; i++){
+            html += '<a href="airport.jsp?icao='+airport_list[i]+'">'+airport_list[i]+'</a>';
+        }
+        html += '<br><br>';
     }
-    html += '<br><br>';
+    
+    if(aircraft_list.length > 0){
+        html += "<h2>Aircraft</h2>";
+        for(i = 0; i < aircraft_list.length; i++){
+            var zp = aircraft_list[i].search('@');
+            if(zp != -1){
+                var id = aircraft_list[i].substr(0, zp);
+                var name = aircraft_list[i].substr(zp + 1, aircraft_list[i].length);
+                html += '<a href="aircraftlog.jsp?id='+id+'">'+ name +'</a>';
+            }
+        }
+        html += '<br><br>';
+    }
+    
     html += '<div onclick="document.getElementById(\'fsem-settings\').style.visibility = \'visible\';" class="settings">Settings</div>';
     
     el_block = document.createElement("div");
@@ -64,7 +87,15 @@
     
     // add menu to page
     el = document.getElementById('wrapper');
-    el.style.marginLeft = '105px';
+    el.style.marginLeft = '155px';
     el.insertBefore(el_block, el.childNodes[0]);    
+    
+    // aircraft page
+    if(document.location.toString().search('aircraftlog.jsp') != -1){
+        var table_list = document.getElementsByTagName('TABLE');
+        var cur_loc_td = table_list[0].childNodes[5].childNodes[0].childNodes[9];
+        var icao = cur_loc_td.innerHTML;
+        cur_loc_td.innerHTML = '<a href="airport.jsp?icao=' + icao + '">' + icao + '</a>';
+    }
 }
 )();
