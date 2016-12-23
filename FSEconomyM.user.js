@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         FSEconomyM
 // @namespace    https://github.com/jmasnik/FSEconomyM
-// @version      0.1
+// @version      0.2
 // @description  Script for FSEconomy website
 // @author       Jiri Masnik
 // @match        http://server.fseconomy.net/*
@@ -17,14 +17,17 @@
     var el;
     var el_block;
     var el_cont;
+    var zp;
+    var id;
+    var name;
     
     var css;
     
     // style
     css = 
-        "#fsem-settings { width: 400px; height: 130px; position: absolute; left: 150px; top: 140px; line-height: normal; background-color: #fff; border: 1px solid gray; font-size: 14px; z-index: 1000; visibility: hidden; margin:0px; padding:0px; text-align:center; }" + 
+        "#fsem-settings { width: 400px; height: 330px; position: absolute; left: 150px; top: 140px; line-height: normal; background-color: #fff; border: 1px solid gray; font-size: 14px; z-index: 1000; visibility: hidden; margin:0px; padding:0px; text-align:center; }" + 
         "#fsem-settings h2 { background-color: gray; color: white; font-size: 15px; padding:4px; text-align:left; }" +
-        "#fsem-settings textarea { margin: 5px; width: 360px; background-color: #f0f0f0; height:40px; padding: 5px; } " +
+        "#fsem-settings textarea { margin: 5px; width: 360px; background-color: #f0f0f0; height:100px; padding: 5px; } " +
         "#fsem-settings input { margin: 5px; width: 360px; background-color: #f0f0f0; padding: 5px; color: white; font-weight:bold; background-color: gray; } " +
         "#fsem-menu { width: 150px; position: absolute; left: 10px; font-size: 14px; line-height: normal; }" + 
         "#fsem-menu h2 { display: block; border-bottom: 1px solid gray; color: #000; padding: 3px; font-size: 14px; margin-bottom: 2px; }" + 
@@ -37,7 +40,7 @@
     
     // init local storage
     if(localStorage.getItem("fsem_airport_list") === null){
-        localStorage.setItem("fsem_airport_list", "LKBU;LKCM");
+        localStorage.setItem("fsem_airport_list", "LKBU@Bubovice;LKCM@Medlánky");
     }
     if(localStorage.getItem("fsem_aircraft_list") === null){
         localStorage.setItem("fsem_aircraft_list", "10191@R-22 (OK-MAY);29080@AS350 (OK-DSW)");
@@ -46,7 +49,10 @@
     // settings dialog
     el_block = document.createElement("div");
     el_block.id = 'fsem-settings';
-    el_block.innerHTML = '<h2>FSEconomyM settings</h2><textarea id="fsem-settings-v-airports">' + localStorage.getItem("fsem_airport_list") + '</textarea><input type="button" value=" Save " onclick="localStorage.setItem(\'fsem_airport_list\', document.getElementById(\'fsem-settings-v-airports\').value); document.location = document.location;">';
+    el_block.innerHTML = '<h2>FSEconomyM settings</h2>' + 
+        '<textarea id="fsem-settings-v-airports">' + localStorage.getItem("fsem_airport_list") + '</textarea>' + 
+        '<textarea id="fsem-settings-v-aircraft">' + localStorage.getItem("fsem_aircraft_list") + '</textarea>' + 
+        '<input type="button" value=" Save " onclick="localStorage.setItem(\'fsem_airport_list\', document.getElementById(\'fsem-settings-v-airports\').value); localStorage.setItem(\'fsem_aircraft_list\', document.getElementById(\'fsem-settings-v-aircraft\').value); document.location = document.location;">';
     document.getElementsByTagName('body')[0].appendChild(el_block);
     
     // airports list
@@ -61,7 +67,15 @@
     if(airport_list.length > 0){
         html += "<h2>Airports</h2>";
         for(i = 0; i < airport_list.length; i++){
-            html += '<a href="airport.jsp?icao='+airport_list[i]+'">'+airport_list[i]+'</a>';
+            zp = airport_list[i].search('@');
+            if(zp != -1){
+                id = airport_list[i].substr(0, zp);
+                name = airport_list[i].substr(zp + 1, airport_list[i].length);
+            } else {
+                id = airport_list[i];
+                name = airport_list[i];
+            }
+            html += '<a href="airport.jsp?icao='+id+'">'+name+'</a>';
         }
         html += '<br><br>';
     }
@@ -69,10 +83,10 @@
     if(aircraft_list.length > 0){
         html += "<h2>Aircraft</h2>";
         for(i = 0; i < aircraft_list.length; i++){
-            var zp = aircraft_list[i].search('@');
+            zp = aircraft_list[i].search('@');
             if(zp != -1){
-                var id = aircraft_list[i].substr(0, zp);
-                var name = aircraft_list[i].substr(zp + 1, aircraft_list[i].length);
+                id = aircraft_list[i].substr(0, zp);
+                name = aircraft_list[i].substr(zp + 1, aircraft_list[i].length);
                 html += '<a href="aircraftlog.jsp?id='+id+'">'+ name +'</a>';
             }
         }
@@ -93,9 +107,25 @@
     // aircraft page
     if(document.location.toString().search('aircraftlog.jsp') != -1){
         var table_list = document.getElementsByTagName('TABLE');
+        
         var cur_loc_td = table_list[0].childNodes[5].childNodes[0].childNodes[9];
-        var icao = cur_loc_td.innerHTML;
-        cur_loc_td.innerHTML = '<a href="airport.jsp?icao=' + icao + '">' + icao + '</a>';
+        var home_loc_td = table_list[0].childNodes[5].childNodes[0].childNodes[7];
+        
+        var icao;
+        var add;
+        
+        icao = cur_loc_td.innerHTML.substr(0,4);
+        add = cur_loc_td.innerHTML.substr(4,cur_loc_td.innerHTML.length);
+        cur_loc_td.innerHTML = '<a href="airport.jsp?icao=' + icao + '">' + icao + '</a>' + add;
+        
+        icao = home_loc_td.innerHTML.substr(0,4);
+        add = home_loc_td.innerHTML.substr(4,home_loc_td.innerHTML.length);
+        home_loc_td.innerHTML = '<a href="airport.jsp?icao=' + icao + '">' + icao + '</a>' + add;
+        
+        var data_table_list = document.getElementsByClassName("dataTable");
+        for(i = 0; i < data_table_list.length; i++){
+            data_table_list[i].style.border = '0px solid gray';
+        }
     }
 }
 )();

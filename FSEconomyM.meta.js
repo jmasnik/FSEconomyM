@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         FSEconomyM
 // @namespace    https://github.com/jmasnik/FSEconomyM
-// @version      0.1
+// @version      0.2
 // @description  Script for FSEconomy website
 // @author       Jiri Masnik
 // @match        http://server.fseconomy.net/*
