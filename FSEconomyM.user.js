@@ -5,6 +5,7 @@
 // @description  Script for FSEconomy website
 // @author       Jiri Masnik
 // @match        http://server.fseconomy.net/*
+// @exclude       http://server.fseconomy.net/maintenancelog.jsp*
 // @grant        GM_addStyle
 // @updateURL    https://github.com/jmasnik/FSEconomyM/raw/release/FSEconomyM.meta.js
 // @downloadURL  https://github.com/jmasnik/FSEconomyM/raw/release/FSEconomyM.user.js
