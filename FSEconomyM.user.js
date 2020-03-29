@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         FSEconomyM
 // @namespace    https://github.com/jmasnik/FSEconomyM
-// @version      0.2
+// @version      0.3
 // @description  Script for FSEconomy website
 // @author       Jiri Masnik
-// @match        http://server.fseconomy.net/*
-// @exclude       http://server.fseconomy.net/maintenancelog.jsp*
+// @match        *://server.fseconomy.net/*
+// @exclude      https://server.fseconomy.net/maintenancelog.jsp*
 // @grant        GM_addStyle
 // @updateURL    https://github.com/jmasnik/FSEconomyM/raw/release/FSEconomyM.meta.js
 // @downloadURL  https://github.com/jmasnik/FSEconomyM/raw/release/FSEconomyM.user.js
@@ -27,8 +27,8 @@
     // style
     css = 
         "#fsem-settings { width: 400px; height: 330px; position: absolute; left: 150px; top: 140px; line-height: normal; background-color: #fff; border: 1px solid gray; font-size: 14px; z-index: 1000; visibility: hidden; margin:0px; padding:0px; text-align:center; }" + 
-        "#fsem-settings h2 { background-color: gray; color: white; font-size: 15px; padding:4px; text-align:left; }" +
-        "#fsem-settings textarea { margin: 5px; width: 360px; background-color: #f0f0f0; height:100px; padding: 5px; } " +
+        "#fsem-settings h2 { background-color: gray; color: white; font-size: 15px; padding:4px; text-align:left; margin: 0px 0px 5px 0px; }" +
+        "#fsem-settings textarea { margin: 5px; width: 360px; background-color: #f0f0f0; height:115px; padding: 5px; } " +
         "#fsem-settings input { margin: 5px; width: 360px; background-color: #f0f0f0; padding: 5px; color: white; font-weight:bold; background-color: gray; } " +
         "#fsem-menu { width: 150px; position: absolute; left: 10px; font-size: 14px; line-height: normal; }" + 
         "#fsem-menu h2 { display: block; border-bottom: 1px solid gray; color: #000; padding: 3px; font-size: 14px; margin-bottom: 2px; }" + 
